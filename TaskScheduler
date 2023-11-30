@@ -1,0 +1,144 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Task {
+    private String name;
+    private String dueDate;
+    private Priority priority;
+    private boolean completed;
+
+    public Task(String name, String dueDate, Priority priority) {
+        this.name = name;
+        this.dueDate = dueDate;
+        this.priority = priority;
+        this.completed = false;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void markAsCompleted() {
+        this.completed = true;
+    }
+
+    @Override
+    public String toString() {
+        return "Task: " + name + " | Due Date: " + dueDate + " | Priority: " + priority + " | Completed: " + completed;
+    }
+}
+
+enum Priority {
+    HIGH, MEDIUM, LOW
+}
+
+class TaskManager {
+    private List<Task> tasks;
+
+    public TaskManager() {
+        tasks = new ArrayList<>();
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void markTaskAsCompleted(int index) {
+        if (index >= 0 && index < tasks.size()) {
+            tasks.get(index).markAsCompleted();
+        }
+    }
+}
+
+public class TaskManagerApp {
+    private static final Scanner scanner = new Scanner(System.in);
+    private static TaskManager taskManager = new TaskManager();
+
+    public static void main(String[] args) {
+        boolean exit = false;
+
+        while (!exit) {
+            System.out.println("===== Task Manager =====");
+            System.out.println("1. Add Task");
+            System.out.println("2. View Tasks");
+            System.out.println("3. Mark Task as Completed");
+            System.out.println("4. Exit");
+            System.out.print("Select an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+
+            switch (choice) {
+                case 1:
+                    addTask();
+                    break;
+                case 2:
+                    viewTasks();
+                    break;
+                case 3:
+                    markTaskAsCompleted();
+                    break;
+                case 4:
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+
+        System.out.println("Exiting Task Manager. Thank you!");
+    }
+
+    private static void addTask() {
+        System.out.print("Enter task name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter due date: ");
+        String dueDate = scanner.nextLine();
+
+        System.out.print("Enter priority (HIGH, MEDIUM, LOW): ");
+        String priorityStr = scanner.nextLine();
+        Priority priority = Priority.valueOf(priorityStr.toUpperCase());
+
+        Task task = new Task(name, dueDate, priority);
+        taskManager.addTask(task);
+
+        System.out.println("Task added successfully!");
+    }
+
+    private static void viewTasks() {
+        List<Task> tasks = taskManager.getTasks();
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks available.");
+        } else {
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println((i + 1) + ". " + tasks.get(i));
+            }
+        }
+    }
+
+    private static void markTaskAsCompleted() {
+        viewTasks();
+        System.out.print("Enter the task number to mark as completed: ");
+        int index = scanner.nextInt() - 1;
+        taskManager.markTaskAsCompleted(index);
+        System.out.println("Task marked as completed!");
+    }
+}
